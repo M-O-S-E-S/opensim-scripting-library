@@ -1,0 +1,26 @@
+/*
+Author: Steven Thompson
+Development Time Frame: March to April, 2015
+Purpose: This script is nice to have but not necessarily essential. It allows the destructible wall to switch from being visible to invisible at the press of a button, which is nice if you need to know where it is when it's not populated by bricks or when it is populated by bricks and you don't want users to see the wall.
+Use: Apply the script to the destructible that spawns the bricks. It will be listening for the correpsonding button press. 
+*/
+
+integer setWallAlphaButtonChannel = -88; // Channel for making the wall visible or transparent
+
+default
+{
+    state_entry()
+    {
+        integer listenHandle = llListen(setWallAlphaButtonChannel, "", "", ""); // Listen to SetWallAlpha Button
+    }
+    listen(integer channel, string name, key id, string message)
+    {
+        if(channel == setWallAlphaButtonChannel) { // Make sure the channel is correct 
+            if(llGetAlpha(ALL_SIDES) == 0.0){ 
+                llSetAlpha(0.5, ALL_SIDES); // Make the wall half-way visible
+            } else {
+                llSetAlpha(0.0, ALL_SIDES); // Make the wall completely invisible 
+            }
+        }
+    }
+}

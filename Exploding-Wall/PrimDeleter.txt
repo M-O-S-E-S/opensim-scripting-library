@@ -1,0 +1,19 @@
+/* 
+Author: Steven Thompson
+Development Time Frame: February to March, 2015
+Purpose: When attached to an object, this script will allow that object to be deleted once the deleter button is pushed.
+Use: attach this script to any item that needs to be deleted regularly. This is good for cleaning up after spawning a large number of that you may or may not be keeping track of.
+*/
+integer objectChannel = -9;
+
+default
+{
+    state_entry()
+    {
+        llListen(objectChannel, "", "", "Die Prims"); // Listen for "Die Prims" to be entered broadcasted over objectChannel
+    }
+    listen(integer channel, string name, key id, string message)
+    {
+        if(message == "Die Prims") llDie(); //Delete Prims
+    }
+}

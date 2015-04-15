@@ -1,0 +1,15 @@
+/*
+Author: Steven Thompson
+Develpoment Time Frame: March, 2015
+Purpose: This script will broadcast the message "Die Prims" across the region on the objectChannel = -9. This will cause any objects with the PrimDeleter scipt to get deleted.
+Use: This shoudl be applied to a button. I called mine DeleterButton.
+*/
+integer objectChannel = -9;
+
+default
+{
+    touch_start(integer num)
+    {
+        llRegionSay(objectChannel, "Die Prims"); 
+    }
+}
