@@ -26,21 +26,4 @@ default
     {
         llRegionSay(setWallAlphaButtonChannel, ""); // Send an empty message to DestructibleWall_Brick that makes it change its alpha
     }
-}/*
-Author: Steven Thompson
-Development Time Frame: March, 2015
-Purpose: Allows the destructible wall's alpha to be changed via button click
-Use: Apply this script to a button to change the wall's aplha; I called mine SetWallAlphaButton. 
-*/
-integer setWallAlphaButtonChannel = -88;
-
-default
-{
-    state_entry()
-    {
-    }
-    touch_start(integer num_detected)
-    {
-        llRegionSay(setWallAlphaButtonChannel, ""); // Send an empty message to DestructibleWall_Brick that makes it change its alpha
-    }
 }
