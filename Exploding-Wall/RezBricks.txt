@@ -46,7 +46,7 @@ default
             }
             for(i=0;i<=brickColumnAmount;i+=brickSize.x){
                 rezPos = llGetPos() - <(wallSize.x/2 - brickSize.x/2 - (float)i + k), 0.0, (wallRotVector.z + wallSize.z/2 - brickSize.z/2 - (float)j)>; // Position Equation
-                llRezObject("StandardBrick", rezPos, <0.0,0.0,0.0>, wallRot, startParam); // Rez them bricks
+                llRezObject("Brick", rezPos, <0.0,0.0,0.0>, wallRot, startParam); // Rez them bricks
             }
         }
     }
