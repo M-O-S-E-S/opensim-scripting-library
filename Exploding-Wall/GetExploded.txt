@@ -1,5 +1,5 @@
 /*
- Copyright 2015 ARL
+Copyright 2015 ARL
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -11,67 +11,48 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
    limitations under the License.
-   
+
 Author: Steven Thompson
+Development Time Frame: February to March, 2015
+Purpose: This script is used to listen for nearby detonation and cause the attached primitive to respond accordingly
+Use: This script should be applied to a primitive object
 */
 
-integer ExplosionChannel = -1337;
-integer listenHandle;
-float explosionDistance;
-vector impulseDirection;
-float blastRadius = 2.0;
-integer counter = 0;
-integer superCounter = 0;
+integer explosionChannel = -1337; // Channel that objects involved in explosion use 
+float blastRadius = 2.0; 
+integer counter = 0; // Used to stop objects from moving around too much after detonation 
+integer superCounter = 0; // Used to stop objects from moving around too much after detonation 
 default
 {
     state_entry()
     {
-        listenHandle = llListen(ExplosionChannel, "", "", "");
+        integer listenHandle = llListen(explosionChannel, "", "", "");
     }
     listen (integer channel, string name, key id, string message)
     {
         list messageList = llParseString2List(message, ["|"], []);// Parse Message to get greande position and explosion force
-        //llSay(0, messageList(0));
         vector grenadeLocation = llList2Vector(messageList, 0); // Grenade position is in the first cell of the list
         float explosionForce = (float)llList2String(messageList, 1);  // Explosion force value is in the second cell of the list
         vector objectLocation = llGetPos();
-        /*explosionDistance = llVecDist(grenadeLocation, objectLocation); // Calculate the distance from grenade to object
-        // Impulse on object is based on how close the object is to the explosion
-        impulseDirection = <grenadeLocation.x-objectLocation.x, grenadeLocation.y-objectLocation.y, grenadeLocation.z-objectLocation.z>;//explosionDistance;
-        if(explosionDistance <= 15) llApplyImpulse(impulseDirection*10, TRUE); // If the object is within 15 meters of the explosion, make object react
-        llSay(0, message);*/
-
-        //llSay(0, (string)objectLocation);
-        //llSay(0, (string)grenadeLocation);
-        //BELOW: From Mike
-        vector diff = objectLocation-grenadeLocation;//objectLocation-grenadeLocation;//mypos-bpos;
-        //llSay(0, (string)diff);
+        vector diff = objectLocation-grenadeLocation; // Get the distance between the grenade and the brick
         float mag = llVecMag(diff);
-        //llSay(0, (string)mag);
-        //llSay(0, "diff.z: " + (string)diff.z);
-        float cylinderMag  = llVecMag(<diff.x, diff.y, 0>); // Come up with better name 
+        float cylinderMag  = llVecMag(<diff.x, diff.y, 0>); // Check nearby bricks to make sure none are left hangning in midair
         if(cylinderMag < blastRadius && diff.z < blastRadius*2){ // Make bricks within blast radius and those near destroyed bricks ready to react to detonation
             llSetStatus(STATUS_PHYSICS, TRUE); // make the object Physical
             llSetStatus(STATUS_PHANTOM, FALSE); // no phantom objects
         }
         if(mag < blastRadius){ // Make all bricks within blast radius to get exploded
-            //llSetStatus(STATUS_PHYSICS, TRUE); // make the object Physical
-            //llSetStatus(STATUS_PHANTOM, FALSE); // no phantom objects
             float brickMass = llGetMass();
-            vector velocityVector = explosionForce*diff;
-            vector momentumVector = brickMass * velocityVector;
-            //llSetVelocity(diff*(blastRadius-mag), TRUE);
-            //llSetPos(llGetPos()+diff*(blastRadius-mag));
-            llApplyImpulse(momentumVector, FALSE);//diff*(blastRadius-mag), FALSE);
-            //llSetForce(diff*(blastRadius-mag), TRUE);
-            llSetTimerEvent(1.0); // Start timer to see how long it make bricks come to rest after so many seconds
+            vector velocityVector = explosionForce*diff; // Physics I stuff... 
+            vector momentumVector = brickMass * velocityVector; // more Physics I stuff...
+            llApplyImpulse(momentumVector, FALSE); // Apply the impulse... Physics I stuff
+            llSetTimerEvent(1.0); // Start timer to make the bricks come to rest after so many seconds
         }
     }
     timer()
     {        
         counter++;
         if (counter == 20) {
-            //llSay(0, (string)llGetVel());
             if (llVecMag(llGetVel()) == 0) {
                 llSetStatus(STATUS_PHYSICS, FALSE); // If the object has stopped moving, make it Non-physical
             } else if(superCounter == 5){
@@ -80,7 +61,6 @@ default
             } else {
                 counter = 0;
                 superCounter++;
-                //llSay(0, (string)superCounter);
             }
         }
     }
